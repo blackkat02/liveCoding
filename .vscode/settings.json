@@ -1,0 +1,20 @@
+{
+  // Режим "підказки тільки на вимогу" — тренуємо пам'ять, а не вибір зі списку.
+  // Ctrl+Space        — список методів
+  // Ctrl+Shift+Space  — аргументи методу (курсор у дужках)
+  // наведення мишею   — сигнатура і опис
+
+  // Список методів НЕ вискакує сам (ні під час набору, ні після крапки)
+  "editor.quickSuggestions": { "other": false, "comments": false, "strings": false },
+  "editor.suggestOnTriggerCharacters": false,
+  "editor.wordBasedSuggestions": "off",
+
+  // Аргументи НЕ вискакують самі після "("
+  "editor.parameterHints.enabled": false,
+
+  // Сірі підписи в коді вимкнені
+  "editor.inlayHints.enabled": "off",
+
+  // Наведення мишею лишається
+  "editor.hover.enabled": "on"
+}

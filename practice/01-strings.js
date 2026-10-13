@@ -139,7 +139,6 @@ function camelToKebab(str) {
   // console.log(res1)
   for (ch of str) {
     if (ch !== ch.toLowerCase()) {
-        // `${res1}"-"${ch.toLowerCase()}`
         res1.push("-" + ch.toLowerCase())
       } else {
         res1.push(ch.toLowerCase())

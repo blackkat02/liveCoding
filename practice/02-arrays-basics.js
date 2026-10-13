@@ -10,10 +10,7 @@ const { test, run, todo } = require('./_lib/tester');
 //   firstAndLast([])        → [null, null]
 // 💡 arr[0], at(-1), ??
 function firstAndLast(arr) {
-  let res = [];
-  arr[0] ? res.push(arr[0]) : res.push(null);
-  arr.at(-1) ? res.push(arr.at(-1)) : res.push(null);
-  return res;
+  return [arr[0] ?? null, arr.at(-1) ?? null];
 }
 
 // 2. stackOps()
@@ -24,9 +21,7 @@ function firstAndLast(arr) {
 function stackOps() {
   let res = [];
   res.push(1);
-  console.log(res);
   res.push(2);
-  console.log(res);
   res.push(3);
   res.pop();
   res.unshift(0);
@@ -38,7 +33,7 @@ function stackOps() {
 //   insertAt([1, 2, 4], 2, 3) → [1, 2, 3, 4]
 // 💡 slice + spread [...a, x, ...b]  або  toSpliced
 function insertAt(arr, index, value) {
-  res = []
+  let res = []
   res.push(...arr.slice(0, index))
   res.push(value)
   res.push(...arr.slice(index))
@@ -49,15 +44,17 @@ function insertAt(arr, index, value) {
 //   removeAt(['a', 'b', 'c'], 1) → ['a', 'c']
 // 💡 slice, concat / spread  або  toSpliced
 function removeAt(arr, index) {
-  res = arr.toSpliced(index, 1)
+  let res = arr.toSpliced(index, 1)
   return res;
 }
 
 // 5. removeAtMutate(arr, index)   — А ТУТ МУТУЙ: зміни сам масив і поверни видалений елемент
 //   const a = [1, 2, 3]; removeAtMutate(a, 0) → 1, a стає [2, 3]
 // 💡 splice (що він повертає?)
-function removeAtMutate(arr, index) {
-  return todo();
+function removeAtMutate(arr, index) {  
+  const [ res1 ] = [ ...arr.splice(index, 1) ];
+  
+  return res1;
 }
 
 // 6. range(start, end)
@@ -65,14 +62,31 @@ function removeAtMutate(arr, index) {
 //   range(1, 5) → [1, 2, 3, 4, 5]
 // 💡 цикл for + push, або Array.from({ length }, (_, i) => ...)
 function range(start, end) {
-  return todo();
+
+  return Array.from(
+    { length: ((end + 1) - start) },
+    (_, i) => start + i,
+  );
+  // let res = []
+  // for (let i = start; i <= end; i++) {
+  //   res.push(i)
+
+  // }
+  // return res;
 }
 
 // 7. chunk(arr, size)
 //   chunk([1, 2, 3, 4, 5], 2) → [[1, 2], [3, 4], [5]]
 // 💡 for з кроком size, slice
 function chunk(arr, size) {
-  return todo();
+  if (size === 0) { return }
+  const res = [];
+  
+  for (let i = 0; i < arr.length; i += size) {
+      res.push(arr.slice(i, i + size))
+  }
+
+  return res;
 }
 
 // 8. rotateRight(arr, k)   — не мутуй
@@ -80,14 +94,20 @@ function chunk(arr, size) {
 //   rotateRight([1, 2, 3], 4)       → [3, 1, 2]   (k може бути > length)
 // 💡 % length, slice(-k), spread
 function rotateRight(arr, k) {
-  return todo();
+  k = (((k % arr.length) + arr.length) % arr.length)
+  // const [...out] = arr.splice(arr.length - k);
+  // arr.splice(0, 0, ...out)
+
+  const out = [...arr.slice(-k), ...arr.slice(0, -k)]
+
+  return out;
 }
 
 // 9. reverseCopy(arr)   — не мутуй
 //   reverseCopy([1, 2, 3]) → [3, 2, 1], оригінал лишається [1, 2, 3]
 // 💡 reverse МУТУЄ! → [...arr].reverse()  або  toReversed
 function reverseCopy(arr) {
-  return todo();
+  return [...arr].reverse();
 }
 
 // 10. zip(a, b)
@@ -95,14 +115,19 @@ function reverseCopy(arr) {
 //   Довжина результату = довжина коротшого масиву.
 // 💡 Math.min, for
 function zip(a, b) {
-  return todo();
+  const res = [];
+  const min = Math.min(a.length, b.length);
+  for (let i = 0; i < min; i++) {
+    res.push([a[i], b[i]]);
+  }
+  return res;
 }
 
 // 11. flattenOnce / flattenAll
 //   flattenAll([1, [2, [3, [4]]]]) → [1, 2, 3, 4]
 // 💡 flat(Infinity)    (свою рекурсивну версію напишеш у блоці 07)
 function flattenAll(arr) {
-  return todo();
+  return arr.flat(Infinity);
 }
 
 // 12. fillMatrix(rows, cols, value)
@@ -110,7 +135,14 @@ function flattenAll(arr) {
 // ⚠️ Пастка: Array(rows).fill([]) кладе ОДИН і той самий масив у всі рядки!
 // 💡 Array.from({ length: rows }, () => Array(cols).fill(value))
 function fillMatrix(rows, cols, value) {
-  return todo();
+  // return Array.from({ length: rows }, () => Array(cols).fill(value));
+
+  const res = [];
+
+  for (let i = 0; i < rows; i++) {
+    res.push(Array(cols).fill(value));
+  }
+  return res;
 }
 
 // 13. contains(arr, value)
