@@ -150,7 +150,7 @@ function fillMatrix(rows, cols, value) {
 //   contains(['x', 'y'], 'y') → { includes: true, index: 1 }
 // 💡 includes, indexOf
 function contains(arr, value) {
-  return todo();
+  return { includes: arr.includes(value), index: arr.indexOf(value)};
 }
 
 // 14. joinWithAnd(arr)
@@ -158,14 +158,19 @@ function contains(arr, value) {
 //   joinWithAnd(['a'])           → 'a'
 // 💡 slice(0, -1), join, at(-1)
 function joinWithAnd(arr) {
-  return todo();
+  if (arr.length <= 1) { return `${arr[0]}` };
+  return arr.slice(0, -1).join(", ") + " and " + arr.at(-1);
 }
 
 // 15. isArrayOfNumbers(value)
 //   isArrayOfNumbers([1, 2]) → true;  isArrayOfNumbers('12') → false;  isArrayOfNumbers([1, '2']) → false
 // 💡 Array.isArray, typeof, цикл for...of
 function isArrayOfNumbers(value) {
-  return todo();
+  if (!Array.isArray(value)) { return false };
+  for (let x of value) {
+    if (!Number.isFinite(x)) { return false };
+  }
+  return true;
 }
 
 // ─────────────── ТЕСТИ (не чіпай) ───────────────
