@@ -9,14 +9,14 @@ const { test, run, todo } = require('./_lib/tester');
 //   countKeys({ a: 1, b: 2 }) → 2
 // 💡 Object.keys
 function countKeys(obj) {
-  return todo();
+  return Object.keys(obj).length;
 }
 
 // 2. sumValues(obj)
 //   sumValues({ a: 1, b: 2, c: 3 }) → 6
 // 💡 Object.values + reduce
 function sumValues(obj) {
-  return todo();
+  return Object.values(obj).reduce((acc, num) => acc + num);
 }
 
 // 3. formatUser(user) — використай ДЕСТРУКТУРИЗАЦІЮ з дефолтами прямо в параметрах
@@ -24,7 +24,8 @@ function sumValues(obj) {
 //   formatUser({ name: 'Anna' })                           → 'Anna (unknown)'
 // 💡 function f({ name, address: { city = 'unknown' } = {} }) { ... }
 function formatUser(user) {
-  return todo();
+  const default1 = "(unknown)";
+  return user.address?.city ? `${user.name} (${user.address.city})` : `${user.name} ${default1}`;
 }
 
 // 4. invert(obj) — ключі ↔ значення
