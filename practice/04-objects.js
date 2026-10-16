@@ -16,30 +16,41 @@ function countKeys(obj) {
 //   sumValues({ a: 1, b: 2, c: 3 }) → 6
 // 💡 Object.values + reduce
 function sumValues(obj) {
-  return Object.values(obj).reduce((acc, num) => acc + num);
+  return Object.values(obj).reduce((acc, num) => acc + num, 0);
 }
 
 // 3. formatUser(user) — використай ДЕСТРУКТУРИЗАЦІЮ з дефолтами прямо в параметрах
 //   formatUser({ name: 'Anna', address: { city: 'Kyiv' } }) → 'Anna (Kyiv)'
 //   formatUser({ name: 'Anna' })                           → 'Anna (unknown)'
 // 💡 function f({ name, address: { city = 'unknown' } = {} }) { ... }
-function formatUser(user) {
-  const default1 = "(unknown)";
-  return user.address?.city ? `${user.name} (${user.address.city})` : `${user.name} ${default1}`;
+function formatUser({ name, address: { city = 'unknown' } = {} }) {
+  // const { name, address = {} } = user
+  // const { city = 'unknown' } = address
+
+  return `${name} (${city})`;
+
+  // const default1 = "(unknown)";
+  // return user.address?.city ? `${user.name} (${user.address.city})` : `${user.name} ${default1}`;
 }
 
 // 4. invert(obj) — ключі ↔ значення
 //   invert({ a: 'x', b: 'y' }) → { x: 'a', y: 'b' }
 // 💡 Object.entries, map, Object.fromEntries
 function invert(obj) {
-  return todo();
+  const res = Object.entries(obj).map(([key, value]) => [value, key]);
+  return Object.fromEntries(res);
 }
 
 // 5. pick(obj, keys)
 //   pick({ a: 1, b: 2, c: 3 }, ['a', 'c']) → { a: 1, c: 3 }
 // 💡 Object.fromEntries + filter  або  reduce;  перевірка: key in obj
 function pick(obj, keys) {
-  return todo();
+  // return keys.reduce((acc, key) => Object.hasOwn(obj, key) ? { ...acc, [key]: obj[key] } : acc, {});
+
+  return keys.reduce((acc, key) => {
+    if (Object.hasOwn(obj, key)) acc[key] = obj[key];
+    return acc;
+  }, {});
 }
 
 // 6. omit(obj, keys)
