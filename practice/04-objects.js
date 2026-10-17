@@ -47,17 +47,31 @@ function invert(obj) {
 function pick(obj, keys) {
   // return keys.reduce((acc, key) => Object.hasOwn(obj, key) ? { ...acc, [key]: obj[key] } : acc, {});
 
-  return keys.reduce((acc, key) => {
-    if (Object.hasOwn(obj, key)) acc[key] = obj[key];
-    return acc;
-  }, {});
+  // return keys.reduce((acc, key) => {
+  //   if (Object.hasOwn(obj, key)) acc[key] = obj[key];
+  //   return acc;
+  // }, {});
+
+
+  const keptEntries = Object.entries(obj).filter(([key]) => keys.includes(key))
+  return Object.fromEntries(keptEntries)
 }
 
 // 6. omit(obj, keys)
 //   omit({ a: 1, b: 2, c: 3 }, ['b']) → { a: 1, c: 3 }
 // 💡 Object.entries + filter + includes  (або rest: const { b, ...rest } = obj — для одного ключа)
 function omit(obj, keys) {
-  return todo();
+  const keptEntries = Object.entries(obj).filter(([key]) => !keys.includes(key))
+  return Object.fromEntries(keptEntries);
+
+  // const key = keys[0]
+  // const { [key]: /_, ...rest } = obj;
+  // return rest;
+
+  // return keys.reduce((acc, key) => {
+  //   const { [key]: _, ...rest } = acc;
+  //   return rest
+  // }, obj)
 }
 
 // 7. mapValues(obj, fn)
