@@ -77,14 +77,16 @@ function omit(obj, keys) {
 // 7. mapValues(obj, fn)
 //   mapValues({ a: 1, b: 2 }, (v) => v * 10) → { a: 10, b: 20 }
 function mapValues(obj, fn) {
-  return todo();
+  const keptEntries = Object.entries(obj).map(([key, value]) => [key, fn(value)])
+  return Object.fromEntries(keptEntries);
 }
 
 // 8. updateUser(user, changes) — повернути НОВИЙ об'єкт, оригінал не мутувати
 //   updateUser({ name: 'A', age: 1 }, { age: 2 }) → { name: 'A', age: 2 }
 // 💡 spread { ...a, ...b }   або Object.assign({}, a, b)
 function updateUser(user, changes) {
-  return todo();
+  // return Object.assign({}, user, changes);
+  return { ...user, ...changes };
 }
 
 // 9. getIn(obj, path, defaultValue)
@@ -92,14 +94,27 @@ function updateUser(user, changes) {
 //   getIn({ a: {} }, 'a.b.c', 'нема')              → 'нема'
 // 💡 split('.'), reduce, ?. , ??
 function getIn(obj, path, defaultValue) {
-  return todo();
+  const splitPath = path.split('.')
+
+  // return splitPath.reduce((acc, sPath) => {
+  //   acc = acc[sPath] ?? defaultValue
+  //   return acc
+  // }, obj)
+
+  // let acc = { ...obj }
+
+  for (let i = 0; i < splitPath.length; i++) {
+    obj = obj[splitPath[i]] ?? defaultValue
+    if (obj === defaultValue) { return obj }
+  }
+  return obj
 }
 
 // 10. hasOwn(obj, key) — тільки ВЛАСНІ ключі (не з прототипу)
 //   hasOwn({ a: 1 }, 'a') → true;   hasOwn({ a: 1 }, 'toString') → false
 // 💡 Object.hasOwn  (а чим відрізняється оператор `in`?)
 function hasOwnKey(obj, key) {
-  return todo();
+  return Object.hasOwn(obj, key);
 }
 
 // 11. deepClone(value) — ВЛАСНА рекурсивна копія об'єктів і масивів (без structuredClone/JSON)
