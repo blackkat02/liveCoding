@@ -117,10 +117,29 @@ function hasOwnKey(obj, key) {
   return Object.hasOwn(obj, key);
 }
 
+//  [() => deepClone({ a: 1, b: { c: [1, 2, { d: 3 }] }, e: null }), { a: 1, b: { c: [1, 2, { d: 3 }] }, e: null }],
+//   [() => { const o = { b: { c: [1] } }; const c = deepClone(o); return c !== o && c.b !== o.b && c.b.c !== o.b.c; }, true, 'всі рівні — нові посилання'],
+
 // 11. deepClone(value) — ВЛАСНА рекурсивна копія об'єктів і масивів (без structuredClone/JSON)
 // 💡 typeof, Array.isArray, null — теж typeof 'object'!, рекурсія
 function deepClone(value) {
-  return todo();
+  const copy = [];
+  if (Object.keys(value).lenght = 0) { return total}
+  Object.keys(value).map(key => {
+    if (typeof value !== 'object' || value === null) {
+      return 1;
+    }
+
+    let total = 0;
+      for (const child of Object.values(value)) {   
+        total += deepClone(child);
+      }
+
+    return total
+  }
+
+  )
+  return total;
 }
 
 // 12. deepEqual(a, b) — рекурсивне порівняння (об'єкти, масиви, примітиви)
