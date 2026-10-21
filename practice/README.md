@@ -1,6 +1,6 @@
 # 🏋️ JS-тренажер: повертаємо руки
 
-154 задачі в 11 блоках — від `slice` до `Promise.all`. Кожна задача — заготовка функції + автотести.
+167 задач у 12 блоках — від `slice` до `Promise.all`. Кожна задача — заготовка функції + автотести.
 
 ## Як працювати
 
@@ -39,6 +39,7 @@ node run-all.js          # загальний прогрес
 | 09 | Функції | rest/default, замикання, `once` `memoize` `curry` `pipe` `debounce` `throttle`, `call/apply/bind` |
 | 10 | Async | `Promise` `async/await` `try/catch` `all/allSettled/race/any`, retry, ліміт паралельності, event loop |
 | 11 | JSON/Date/класи | `JSON.parse/stringify` (replacer, space), `Date` UTC, `class` `#private` `get` `static` `extends` `super`, свої помилки |
+| 12 | Копії і Event Loop | посилання vs значення, spread vs deep copy, втрати `JSON`-копії, `structuredClone`, імутабельний `updateIn`, цикли в clone, порядок мікро/макротасок, `async/await`, `nextTick`, `var` vs `let` у таймерах, свій `Promise.all` |
 
 ## Самоперевірка: чи пам'ятаю я, що повертає метод?
 
@@ -68,3 +69,4 @@ node run-all.js          # загальний прогрес
 - [ ] 09 Функції і замикання
 - [ ] 10 Async
 - [ ] 11 JSON, Date, класи
+- [ ] 12 Копії і Event Loop

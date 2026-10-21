@@ -117,37 +117,59 @@ function hasOwnKey(obj, key) {
   return Object.hasOwn(obj, key);
 }
 
-//  [() => deepClone({ a: 1, b: { c: [1, 2, { d: 3 }] }, e: null }), { a: 1, b: { c: [1, 2, { d: 3 }] }, e: null }],
-//   [() => { const o = { b: { c: [1] } }; const c = deepClone(o); return c !== o && c.b !== o.b && c.b.c !== o.b.c; }, true, 'всі рівні — нові посилання'],
-
 // 11. deepClone(value) — ВЛАСНА рекурсивна копія об'єктів і масивів (без structuredClone/JSON)
 // 💡 typeof, Array.isArray, null — теж typeof 'object'!, рекурсія
 function deepClone(value) {
-  const copy = [];
-  if (Object.keys(value).lenght = 0) { return total}
-  Object.keys(value).map(key => {
-    if (typeof value !== 'object' || value === null) {
-      return 1;
-    }
+  let copy = {};
 
-    let total = 0;
-      for (const child of Object.values(value)) {   
-        total += deepClone(child);
-      }
-
-    return total
+  if (typeof value !== 'object' || value === null) {
+    copy = value
+    return copy;
   }
 
-  )
-  return total;
+  if (Array.isArray(value)) {
+    return value.map(item => deepClone(item));
+  }
+
+  if ( Object.getPrototypeOf(value) === Object.prototype) {
+    for (key of Object.keys(value)) {
+      copy[key] = deepClone(value[key]);
+    }
+    return copy;
+  }
+
+  return copy;
 }
 
 // 12. deepEqual(a, b) — рекурсивне порівняння (об'єкти, масиви, примітиви)
 //   deepEqual({ a: [1, { b: 2 }] }, { a: [1, { b: 2 }] }) → true
 // 💡 ===, Object.keys довжини, every, рекурсія
 function deepEqual(a, b) {
-  return todo();
+  if (typeof a !== typeof b) { return false };
+
+  if (a === null || b === null) return a === b;
+ 
+  if (typeof a !== 'object') {
+    return a === b
+  }
+
+  if (Object.keys(a).length !== Object.keys(b).length) { return false };
+
+  if (Array.isArray(a) !== Array.isArray(b)) { return false };
+
+  for (let key of Object.keys(a)) {
+    if (!Object.hasOwn(b, key)) {
+      return false
+    }
+
+    if (deepEqual(a[key], b[key]) === false) { return false }
+  }
+
+  return true;
 }
+
+//  [() => deepMerge({ a: 1, n: { x: 1 } }, { b: 2, n: { y: 2 } }), { a: 1, b: 2, n: { x: 1, y: 2 } }],
+//   [() => { const t = { n: { x: 1 } }; deepMerge(t, { n: { y: 2 } }); return t; }, { n: { x: 1 } }, 'target не змінюється'],
 
 // 13. deepMerge(target, source) — повернути НОВИЙ об'єкт; вкладені об'єкти зливаються, а не замінюються
 //   deepMerge({ a: 1, n: { x: 1 } }, { b: 2, n: { y: 2 } }) → { a: 1, b: 2, n: { x: 1, y: 2 } }
@@ -209,6 +231,15 @@ test('deepEqual', [
   [() => deepEqual([1, 2], [2, 1]), false],
   [() => deepEqual(null, {}), false],
   [() => deepEqual('x', 'x'), true],
+  [() => deepEqual({ a: 1 }, { a: 2 }), false, 'однакові ключі, різні значення'],
+  [() => deepEqual({ a: 1 }, { b: 1 }), false, 'різні ключі, однакові значення'],
+  [() => deepEqual({ a: 1, b: 2 }, { b: 2, a: 1 }), true, 'порядок ключів не важливий'],
+  [() => deepEqual({ a: undefined }, { b: undefined }), false, 'ключ з undefined ≠ відсутній ключ'],
+  [() => deepEqual({ a: [1, { b: 2 }] }, { a: [1, { b: 3 }] }), false, 'різниця глибоко всередині'],
+  [() => deepEqual([], {}), false, 'масив ≠ об\'єкт'],
+  [() => deepEqual({ 0: 1 }, [1]), false, 'об\'єкт ≠ масив (інший порядок аргументів)'],
+  [() => deepEqual(null, null), true],
+  [() => deepEqual(1, '1'), false, 'різні типи'],
 ]);
 test('deepMerge', [
   [() => deepMerge({ a: 1, n: { x: 1 } }, { b: 2, n: { y: 2 } }), { a: 1, b: 2, n: { x: 1, y: 2 } }],
