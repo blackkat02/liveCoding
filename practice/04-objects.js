@@ -174,7 +174,45 @@ function deepEqual(a, b) {
 // 13. deepMerge(target, source) — повернути НОВИЙ об'єкт; вкладені об'єкти зливаються, а не замінюються
 //   deepMerge({ a: 1, n: { x: 1 } }, { b: 2, n: { y: 2 } }) → { a: 1, b: 2, n: { x: 1, y: 2 } }
 function deepMerge(target, source) {
-  return todo();
+  if ( (Object.getPrototypeOf(target) !== Object.prototype) || (Object.getPrototypeOf(source) !== Object.prototype) ) { return "Can't merge"} 
+  console.log(target)
+  let obj = { ...target }
+  console.log(target)
+  // let arr = [...Object.keys(target), ...Object.keys(source)].filter(key => )
+  // console.log(arr)
+
+  for (let key in source) {
+    if (Object.hasOwn(source, key)) {
+      if (!Object.hasOwn(obj, key)) {
+        obj[key] = source[key]
+        console.log(obj[key], source[key], key)
+      } else {
+        if (typeof obj[key] !== 'object' || obj[key] === null) {
+
+          obj[key] = obj[key]
+        } else {
+
+        }
+
+        if (typeof source[key] !== 'object' || source[key] === null) {
+          obj[key] = source[key]
+        } else {
+
+        }
+
+        let obj1 = Object.assign(obj[key], source[key])
+        let obj2 = {key: obj1}
+        console.log(obj1, obj2)
+
+        console.log(target)
+
+        // Object.assign(obj, obj2)
+        // obj[key] = { key: { obj[key], source[key] } }
+      }
+    }
+  };
+
+  return obj;
 }
 
 // 14. freezeConfig(config) — заморозити об'єкт і повернути його.
