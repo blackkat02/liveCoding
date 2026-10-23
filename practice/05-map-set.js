@@ -8,14 +8,14 @@ const { test, run, todo } = require('./_lib/tester');
 //   unique([1, 2, 2, 3, 1]) → [1, 2, 3]
 // 💡 new Set, spread / Array.from
 function unique(arr) {
-  return todo();
+  return Array.from(new Set(arr));
 }
 
 // 2. hasDuplicates(arr)
 //   hasDuplicates([1, 2, 3, 1]) → true
 // 💡 Set.size vs length
 function hasDuplicates(arr) {
-  return todo();
+  return arr.length !== new Set(arr).size;
 }
 
 // 3. frequencyMap(arr) — повернути саме Map

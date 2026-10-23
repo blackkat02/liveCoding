@@ -132,7 +132,7 @@ function deepClone(value) {
   }
 
   if ( Object.getPrototypeOf(value) === Object.prototype) {
-    for (key of Object.keys(value)) {
+    for (const key of Object.keys(value)) {
       copy[key] = deepClone(value[key]);
     }
     return copy;
@@ -168,46 +168,25 @@ function deepEqual(a, b) {
   return true;
 }
 
-//  [() => deepMerge({ a: 1, n: { x: 1 } }, { b: 2, n: { y: 2 } }), { a: 1, b: 2, n: { x: 1, y: 2 } }],
-//   [() => { const t = { n: { x: 1 } }; deepMerge(t, { n: { y: 2 } }); return t; }, { n: { x: 1 } }, 'target не змінюється'],
-
 // 13. deepMerge(target, source) — повернути НОВИЙ об'єкт; вкладені об'єкти зливаються, а не замінюються
 //   deepMerge({ a: 1, n: { x: 1 } }, { b: 2, n: { y: 2 } }) → { a: 1, b: 2, n: { x: 1, y: 2 } }
 function deepMerge(target, source) {
-  if ( (Object.getPrototypeOf(target) !== Object.prototype) || (Object.getPrototypeOf(source) !== Object.prototype) ) { return "Can't merge"} 
-  console.log(target)
-  let obj = { ...target }
-  console.log(target)
-  // let arr = [...Object.keys(target), ...Object.keys(source)].filter(key => )
-  // console.log(arr)
+  const obj = { ...target }
 
   for (let key in source) {
     if (Object.hasOwn(source, key)) {
       if (!Object.hasOwn(obj, key)) {
         obj[key] = source[key]
-        console.log(obj[key], source[key], key)
       } else {
-        if (typeof obj[key] !== 'object' || obj[key] === null) {
-
-          obj[key] = obj[key]
-        } else {
-
-        }
-
-        if (typeof source[key] !== 'object' || source[key] === null) {
+        if (source[key] === null) {
+          obj[key] = null
+        } else if ( obj[key] === null
+          || (Object.getPrototypeOf(obj[key]) !== Object.prototype) 
+          || (Object.getPrototypeOf(source[key]) !== Object.prototype) ) {
           obj[key] = source[key]
-        } else {
-
+        } else {    
+          obj[key] =  deepMerge(obj[key], source[key])      
         }
-
-        let obj1 = Object.assign(obj[key], source[key])
-        let obj2 = {key: obj1}
-        console.log(obj1, obj2)
-
-        console.log(target)
-
-        // Object.assign(obj, obj2)
-        // obj[key] = { key: { obj[key], source[key] } }
       }
     }
   };
@@ -219,14 +198,15 @@ function deepMerge(target, source) {
 // Після цього спроба змінити поле не повинна нічого змінити.
 // 💡 Object.freeze  (а вкладені об'єкти теж заморожуються?)
 function freezeConfig(config) {
-  return todo();
+  return Object.freeze(config);
 }
 
 // 15. entriesToTable(obj) — рядок "ключ: значення" через перенос рядка, ключі відсортовані
 //   entriesToTable({ b: 2, a: 1 }) → 'a: 1\nb: 2'
 // 💡 Object.entries, sort, map, template literal, join('\n')
 function entriesToTable(obj) {
-  return todo();
+  const arr = Object.entries(obj).sort(([key1], [key2]) => key1.localeCompare(key2));
+  return arr.map(([key, value]) => `${key}: ${value}`).join("\n")
 }
 
 // ─────────────── ТЕСТИ (не чіпай) ───────────────
@@ -282,6 +262,13 @@ test('deepEqual', [
 test('deepMerge', [
   [() => deepMerge({ a: 1, n: { x: 1 } }, { b: 2, n: { y: 2 } }), { a: 1, b: 2, n: { x: 1, y: 2 } }],
   [() => { const t = { n: { x: 1 } }; deepMerge(t, { n: { y: 2 } }); return t; }, { n: { x: 1 } }, 'target не змінюється'],
+  [() => deepMerge({ a: 1 }, { a: 2 }), { a: 2 }, 'примітив перезаписує примітив'],
+  [() => deepMerge({ a: { x: 1 } }, { a: 5 }), { a: 5 }, 'примітив перезаписує об\'єкт'],
+  [() => deepMerge({ a: 1 }, { a: { x: 1 } }), { a: { x: 1 } }, 'об\'єкт перезаписує примітив'],
+  [() => deepMerge({ a: null }, { a: { x: 1 } }), { a: { x: 1 } }, 'null у target'],
+  [() => deepMerge({ a: { x: 1 } }, { a: null }), { a: null }, 'null у source перезаписує'],
+  [() => deepMerge({ a: [1] }, { a: [2] }), { a: [2] }, 'масиви не зливаються, а замінюються'],
+  [() => deepMerge({ a: { b: { c: 1, d: 1 } } }, { a: { b: { c: 2 } } }), { a: { b: { c: 2, d: 1 } } }, '3 рівні вкладеності'],
 ]);
 test('freezeConfig', [
   [() => { const c = freezeConfig({ port: 80 }); try { c.port = 1; } catch {} return [c.port, Object.isFrozen(c)]; }, [80, true]],
