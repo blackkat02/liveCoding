@@ -22,14 +22,37 @@ function hasDuplicates(arr) {
 //   frequencyMap(['a', 'b', 'a']) → Map { 'a' => 2, 'b' => 1 }
 // 💡 new Map, get, set, (map.get(x) ?? 0) + 1
 function frequencyMap(arr) {
-  return todo();
+  return arr.reduce((acc, char) => acc.set(char, (acc.get(char) ?? 0) + 1), new Map())
+  // let map = new Map();
+  // arr.forEach(char => (map.set(char, (map.get(char) ?? 0) + 1)))
+  
+  // for (const char of arr) {
+  //   map.set(char, (map.get(char) ?? 0) + 1)
+  // }
+  // return map;
 }
 
 // 4. mostFrequent(arr) — найчастіший елемент (при рівності — той, що зустрівся раніше)
 //   mostFrequent([3, 1, 3, 2, 1, 3]) → 3
 // 💡 Map + for...of по map.entries() (або [...map].sort / reduce)
 function mostFrequent(arr) {
-  return todo();
+  const map = arr.reduce((acc, char) => acc.set(char, (acc.get(char) ?? 0) + 1), new Map());
+  let bestKey = null, bestCount = 0;
+
+  for (const [key, value] of map) {
+    if (value > bestCount) {
+      bestKey = key;
+      bestCount = value;
+    }
+  }
+
+  return bestKey;
+
+  // const iterator = map.entries();
+
+  // return iterator.reduce((acc, [key, value]) => iterator.next().value)
+
+  // return [...map].sort(([key1, value1], [key2, value2]) => value2 - value1)[0][0];
 }
 
 // 5. firstNonRepeatingChar(str) — перший символ, що зустрічається 1 раз, або null
