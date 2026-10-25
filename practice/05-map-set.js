@@ -59,29 +59,75 @@ function mostFrequent(arr) {
 //   firstNonRepeatingChar('aabbcdd') → 'c'
 // 💡 два проходи: порахувати → знайти
 function firstNonRepeatingChar(str) {
-  return todo();
-}
+  const mapCount = new Map();
+
+  for (const char of str) {
+    mapCount.set(char, (mapCount.get(char) ?? 0) +1)
+  };
+
+  for (const [char, value] of mapCount) {
+    if (value === 1) {
+      return char;
+    } 
+  };
+
+  return null;
+};
 
 // 6. twoSum(nums, target) — індекси двох чисел, сума яких = target. O(n)!
 //   twoSum([2, 7, 11, 15], 9) → [0, 1]
 //   Нема пари → null
 // 💡 Map: значення → індекс; шукай target - x
 function twoSum(nums, target) {
-  return todo();
+  const map = new Map()
+  let count = 0
+
+  for (const num of nums) {
+    const newTarget = target - num;
+
+    if (map.has(newTarget)) {
+      return [map.get(newTarget), count]
+    }
+    map.set(num, count)
+    count += 1
+  };
+
+  return null;
 }
 
 // 7. isAnagram(a, b)
 //   isAnagram('listen', 'silent') → true
 // 💡 варіант 1: split + sort + join;  варіант 2: лічильник у Map
 function isAnagram(a, b) {
-  return todo();
+  if (a.length !== b.length) return false;
+
+  let map = new Map();
+
+  for (let i = 0; i < a.length; i++) {
+    map.set(a[i], (map.get(a[i]) ?? 0) +1);
+    map.set(b[i], (map.get(b[i]) ?? 0) -1);
+  }
+
+  return [...map.values()].every(num => num === 0);
 }
 
 // 8. groupAnagrams(words) — групи в порядку першої появи
 //   ['eat', 'tea', 'tan', 'ate', 'nat', 'bat'] → [['eat', 'tea', 'ate'], ['tan', 'nat'], ['bat']]
 // 💡 Map: відсортоване слово → масив; [...map.values()]
-function groupAnagrams(words) {
-  return todo();
+function groupAnagrams(words) { 
+  const arr = []
+
+
+  for (const word of words) {
+    const map = new Map();
+    for (const char of word) {
+      map.set(char, (map.get(char) ?? 0) +1)
+    }
+
+    // arr.push([...map])
+  };
+
+  return arr
 }
 
 // 9. setOps(a, b) → { union, intersection, difference } (масиви, без дублів)
