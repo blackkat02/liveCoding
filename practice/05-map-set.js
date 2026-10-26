@@ -115,47 +115,73 @@ function isAnagram(a, b) {
 //   ['eat', 'tea', 'tan', 'ate', 'nat', 'bat'] → [['eat', 'tea', 'ate'], ['tan', 'nat'], ['bat']]
 // 💡 Map: відсортоване слово → масив; [...map.values()]
 function groupAnagrams(words) { 
-  const arr = []
-
+  const map = new Map();
 
   for (const word of words) {
-    const map = new Map();
-    for (const char of word) {
-      map.set(char, (map.get(char) ?? 0) +1)
-    }
-
-    // arr.push([...map])
+    const key = word.split("").sort().join("")
+    !map.has(key) ? map.set(key, [word]) : map.get(key).push(word)
   };
 
-  return arr
+  return [...map.values()]
 }
 
 // 9. setOps(a, b) → { union, intersection, difference } (масиви, без дублів)
 //   setOps([1, 2, 3], [2, 3, 4]) → { union: [1, 2, 3, 4], intersection: [2, 3], difference: [1] }
 // 💡 new Set, has, filter
 function setOps(a, b) {
-  return todo();
+  const aS = new Set(a)
+  const bS = new Set(b)
+  // return { union: [...aS.union(bS)], intersection: [...aS.intersection(bS).values()], difference: [...aS.difference(bS).values()] };
+
+  const difference = [...aS].filter(x => !bS.has(x))
+  const union = [...difference, ...bS] 
+  const intersection = [...aS].filter(x => bS.has(x))
+
+  return { union: union, intersection: intersection, difference: difference };
 }
 
 // 10. mapToObject(map) і objectToMap(obj)
 //   mapToObject(new Map([['a', 1]])) → { a: 1 }
 // 💡 Object.fromEntries(map), new Map(Object.entries(obj))
 function mapToObject(map) {
-  return todo();
+  return Object.fromEntries(map);
 }
 function objectToMap(obj) {
-  return todo();
+  return new Map(Object.entries(obj));
 }
 
-// 11. uniqueBy(arr, key) — залишити перший об'єкт для кожного значення key
+// 11. uniqueBy(arr, key) — прибрати дублі за полем key
+// Два об'єкти — «дублі», якщо в них однакове значення поля key (інші поля не важливі).
+// Для КОЖНОГО значення key лишається перший об'єкт, де воно трапилось; решта з тим самим значенням — викидаються.
+// Порядок тих, що лишились, — як у вхідному масиві. Порожній масив → [].
 //   uniqueBy([{ id: 1, n: 'a' }, { id: 1, n: 'b' }, { id: 2, n: 'c' }], 'id') → [{ id: 1, n: 'a' }, { id: 2, n: 'c' }]
+//   uniqueBy([{ id: 1 }, { id: 2 }, { id: 1 }, { id: 3 }, { id: 2 }], 'id') → [{ id: 1 }, { id: 2 }, { id: 3 }]
 // 💡 Set "вже бачив" + filter
 function uniqueBy(arr, key) {
-  return todo();
+  const example = new Set()
+  // const example = set.values();
+  const res = []
+
+  for (let i = 0; i < arr.length; i++) {
+    const v = arr[i][key]
+
+    if (!example.has(v)) {
+      res.push(arr[i])
+      example.add(v)
+    } 
+  }
+
+  // const objFilter = arr.filter(obj => example.include(obj[key]))
+
+  return res;
 }
 
 // 12. createCache() — простий кеш на Map
 // Повернути об'єкт з методами: set(k, v), get(k) (або null), has(k), delete(k), size()
+//   - get(k) для ключа, якого нема, → null (не undefined)
+//   - set для наявного ключа перезаписує значення (size не росте)
+//   - збережене 0 / '' / false — це справжнє значення: get його повертає, а не null
+//   - кожен createCache() — окремий кеш, вони не ділять дані
 function createCache() {
   return todo();
 }
@@ -200,6 +226,10 @@ test('mapToObject / objectToMap', [
 ]);
 test('uniqueBy', [
   [() => uniqueBy([{ id: 1, n: 'a' }, { id: 1, n: 'b' }, { id: 2, n: 'c' }], 'id'), [{ id: 1, n: 'a' }, { id: 2, n: 'c' }]],
+  [() => uniqueBy([{ id: 1, n: 'a' }, { id: 2, n: 'b' }, { id: 1, n: 'c' }, { id: 3, n: 'd' }, { id: 2, n: 'e' }], 'id'),
+    [{ id: 1, n: 'a' }, { id: 2, n: 'b' }, { id: 3, n: 'd' }], 'дублі різних id упереміш'],
+  [() => uniqueBy([{ t: 'x', v: 1 }, { t: 'y', v: 2 }, { t: 'x', v: 3 }], 't'), [{ t: 'x', v: 1 }, { t: 'y', v: 2 }], 'інше ім\'я ключа'],
+  [() => uniqueBy([], 'id'), []],
 ]);
 test('createCache', [
   [() => {
@@ -209,6 +239,10 @@ test('createCache', [
     c.delete('b');
     return [c.get('a'), c.get('b'), c.has('a'), c.size()];
   }, [1, null, true, 1], 'set/get/delete/has/size'],
+  [() => { const c = createCache(); c.set('a', 1); c.set('a', 2); return [c.get('a'), c.size()]; }, [2, 1], 'перезапис ключа'],
+  [() => { const c = createCache(); return [c.get('nope'), c.has('nope'), c.size()]; }, [null, false, 0], 'порожній кеш'],
+  [() => { const c = createCache(); c.set('z', 0); c.set('e', ''); return [c.get('z'), c.get('e'), c.has('z')]; }, [0, '', true], 'falsy-значення зберігаються'],
+  [() => { const a = createCache(); const b = createCache(); a.set('k', 1); return [b.has('k'), b.size()]; }, [false, 0], 'кеші незалежні'],
 ]);
 
 run('Блок 05 — Map і Set');

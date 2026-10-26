@@ -73,6 +73,7 @@ function structuredCloneFacts() {
 //   updateIn({ a: { b: 1 }, z: { k: 1 } }, ['a', 'b'], 2) → { a: { b: 2 }, z: { k: 1 } }
 // Вимоги: оригінал не змінюється; гілки, яких не торкались, — ТІ САМІ посилання
 // (structural sharing, як у Redux/React state); відсутні проміжні об'єкти створюються.
+// Сусідні ключі на шляху зберігаються: updateIn({ a: { b: 1, c: 2 } }, ['a', 'b'], 9) → { a: { b: 9, c: 2 } }
 // 💡 копіюй тільки вузли на шляху: spread + рекурсія (або цикл з кінця)
 function updateIn(obj, path, value) {
   return todo();
@@ -83,6 +84,7 @@ function updateIn(obj, path, value) {
 //   - Map / Set → нові Map / Set з глибоко скопійованим вмістом
 //   - циклічні посилання (o.self = o) не ламають функцію
 //   - спільні посилання зберігаються: { p: x, q: x } → у копії c.p === c.q
+//   - примітиви і null повертаються як є: deepCloneFull(5) → 5
 // 💡 instanceof; WeakMap «оригінал → копія»: запиши копію в map ДО рекурсії в дітей
 function deepCloneFull(value) {
   return todo();
@@ -169,6 +171,8 @@ test('updateIn', [
   [() => { const o = { a: { b: 1 } }; updateIn(o, ['a', 'b'], 2); return o; }, { a: { b: 1 } }, 'оригінал не змінюється'],
   [() => { const o = { a: { b: 1 }, z: { k: 1 } }; const r = updateIn(o, ['a', 'b'], 2); return [r !== o, r.a !== o.a, r.z === o.z]; }, [true, true, true], 'шлях — нові посилання, решта — ті самі'],
   [() => updateIn({}, ['x', 'y'], 1), { x: { y: 1 } }, 'створює відсутні об\'єкти'],
+  [() => updateIn({ a: { b: 1, c: 2 } }, ['a', 'b'], 9), { a: { b: 9, c: 2 } }, 'сусідні ключі на шляху лишаються'],
+  [() => updateIn({ a: 1 }, ['a'], 5), { a: 5 }, 'шлях з одного ключа'],
 ]);
 test('deepCloneFull', [
   [() => { const o = { d: new Date(0) }; const c = deepCloneFull(o); return [c.d instanceof Date, c.d.getTime(), c.d !== o.d]; }, [true, 0, true], 'Date'],
@@ -180,6 +184,9 @@ test('deepCloneFull', [
   [() => { const o = { n: 1 }; o.self = o; const c = deepCloneFull(o); return [c !== o, c.self === c, c.n]; }, [true, true, 1], 'циклічне посилання'],
   [() => { const x = { v: 1 }; const c = deepCloneFull({ p: x, q: x }); return [c.p === c.q, c.p !== x]; }, [true, true], 'спільні посилання'],
   [() => deepCloneFull({ a: [1, { b: 2 }], e: null }), { a: [1, { b: 2 }], e: null }, 'звичайні об\'єкти й масиви'],
+  [() => [deepCloneFull(5), deepCloneFull('s'), deepCloneFull(null)], [5, 's', null], 'примітиви'],
+  [() => { const inner = { v: 1 }; const c = deepCloneFull({ s: new Set([inner]) }); return [...c.s][0] !== inner; }, true, 'вміст Set теж копіюється'],
+  [() => { const a = [1, { b: 2 }]; const c = deepCloneFull(a); return [Array.isArray(c), c[1] !== a[1]]; }, [true, true], 'масив лишається масивом'],
 ]);
 test('asyncAwaitOrder', [[() => asyncAwaitOrder(), ['1', '3', '5', '7', '4', '6', '2']]]);
 test('nestedQueuesOrder', [[() => nestedQueuesOrder(), ['G', 'I', 'D', 'F', 'H', 'A', 'B', 'C', 'E']]]);
@@ -191,6 +198,7 @@ test('promiseAll', [
   [() => promiseAll([wait(20, 'slow'), wait(1, 'fast')]), ['slow', 'fast'], 'порядок items, а не завершення'],
   [() => promiseAll([wait(5, 1), Promise.reject(new Error('boom'))]).catch((e) => e.message), 'boom'],
   [() => promiseAll([]), []],
+  [() => promiseAll([1, 'a']), [1, 'a'], 'тільки не-проміси'],
 ]);
 
 run('Блок 12 — Копії і Event Loop');

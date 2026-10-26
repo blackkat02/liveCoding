@@ -131,7 +131,7 @@ function deepClone(value) {
     return value.map(item => deepClone(item));
   }
 
-  if ( Object.getPrototypeOf(value) === Object.prototype) {
+  if ( Object.getPrototypeOf(value) === Object.prototype ) {
     for (const key of Object.keys(value)) {
       copy[key] = deepClone(value[key]);
     }
