@@ -5,10 +5,27 @@
  * @returns {string} The result URL.
  */
 function addOrChangeUrlParameter (url, param) {
-  if (param === "key") { return url }
+  const arr = url.split("?")
+  console.log(arr, arr.length)
   
-  return url.concat("?", param)
+  if (!param) { 
+    return url 
+  } else if (arr.length === 1) { 
+    return url.concat("?", param) 
+  };
+  
+  const [urlKey, urlValue] = arr[1].split("=")
+  console.log(urlKey, urlValue)
+  const [paramKey, paramValue] = param.split("=")
+  console.log(urlKey, urlValue)
+
+  if (urlKey === paramKey) {
+    return arr[0].concat("?", param)
+  } else {
+    return url.concat("?", param)
+  }
 }
+
 
 console.log(addOrChangeUrlParameter("www.example.com", "key=value"))
 

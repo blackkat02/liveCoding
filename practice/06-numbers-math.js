@@ -8,7 +8,7 @@ const { test, run, todo } = require('./_lib/tester');
 //   minMax([3, 1, 4, 1, 5]) → { min: 1, max: 5 }
 // 💡 Math.min(...arr), Math.max(...arr)
 function minMax(nums) {
-  return todo();
+  return { min: Math.min(...nums), max: Math.max(...nums) };
 }
 
 // 2. roundTo(num, digits)
@@ -16,20 +16,23 @@ function minMax(nums) {
 // Повертає ЧИСЛО, не рядок.
 // 💡 toFixed повертає РЯДОК → Number(...)  /  або Math.round(num * 10 ** d) / 10 ** d
 function roundTo(num, digits) {
-  return todo();
+  return Number(num.toFixed(digits))
+
 }
 
 // 3. clamp(n, min, max) — обмежити число межами
 //   clamp(15, 0, 10) → 10;  clamp(-5, 0, 10) → 0
 // 💡 Math.min / Math.max
 function clamp(n, min, max) {
+  // console.log(min)
+  // return (n, min, max).Math.min()
   return todo();
 }
 
 // 4. randomInt(min, max) — ціле випадкове від min до max ВКЛЮЧНО
 // 💡 Math.random, Math.floor
 function randomInt(min, max) {
-  return todo();
+  return Math.floor(Math.random() * (max + 1 - min) + min);
 }
 
 // 5. sumDigits(n)

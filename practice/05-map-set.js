@@ -159,7 +159,6 @@ function objectToMap(obj) {
 // 💡 Set "вже бачив" + filter
 function uniqueBy(arr, key) {
   const example = new Set()
-  // const example = set.values();
   const res = []
 
   for (let i = 0; i < arr.length; i++) {
@@ -170,8 +169,6 @@ function uniqueBy(arr, key) {
       example.add(v)
     } 
   }
-
-  // const objFilter = arr.filter(obj => example.include(obj[key]))
 
   return res;
 }
