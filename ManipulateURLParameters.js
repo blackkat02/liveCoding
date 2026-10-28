@@ -5,8 +5,11 @@
  * @returns {string} The result URL.
  */
 function addOrChangeUrlParameter (url, param) {
+  console.log(url, param)
   const arr = url.split("?")
-  console.log(arr, arr.length)
+  const res = [arr[0]]
+  // console.log(arr, arr.length)
+  let flag = false
   
   if (!param) { 
     return url 
@@ -14,15 +17,31 @@ function addOrChangeUrlParameter (url, param) {
     return url.concat("?", param) 
   };
   
-  const [urlKey, urlValue] = arr[1].split("=")
-  console.log(urlKey, urlValue)
+//   const [urlKey, urlValue] = arr[1].split("=")
+//   console.log(urlKey, urlValue)
   const [paramKey, paramValue] = param.split("=")
-  console.log(urlKey, urlValue)
-
-  if (urlKey === paramKey) {
-    return arr[0].concat("?", param)
-  } else {
-    return url.concat("?", param)
+  // console.log(paramKey, paramValue)
+  
+  for (const urlKeyValue of arr.slice(1)) {
+    console.log(urlKeyValue)
+    const [urlKey, urlValue] = urlKeyValue.split("=")
+    
+    if (urlKey === paramKey) {
+      res.push("?", urlKey, "=", paramValue)
+      flag = true
+    } else { 
+      res.push("?", urlKey, "=", urlValue)
+    }
+//     console.log(res.join(""))
+//     console.log(res.push("?", param).join(""))
+    if (flag) {
+      return res.join("")
+    } else {
+      res.push("?", param)
+      return res.join("")
+    }
+    
+    return flag = true ? res.join("") : res.push("?", param).join("")
   }
 }
 
